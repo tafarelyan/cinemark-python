@@ -1,19 +1,27 @@
-import os
-import sys
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
 import requests
 from sqlalchemy.orm import Session
 
+from database import (engine, Regioes, Cidades, Cinemas, Generos, Salas,
+                      Filmes, Legendas)
+
+
+def clean(text):
+    return ' '.join(text.split())
+
+
+def boolean(text):
+    return {'true': True, 'false': False}[text]
+
+
 r = requests.get('http://www.cinemark.com.br/programacao.xml')
 root = ET.fromstring(r.content)
 
-clean = lambda text: ' '.join(text.split())
-boolean = lambda text: {'true': True, 'false': False}[text] 
 
-from database import (engine, Regioes, Cidades, Cinemas, Generos, Salas,
-                      Filmes)
+for child in root[3][0][2:-1]:
+    emcartaz = {}
 
 session = Session(engine)
 for child in root[0]:
@@ -37,7 +45,7 @@ for child in root[1]:
 
 for child in root[2]:
     cinema = {
-        'cinema_id': child.attrib['id'],
+        'id': child.attrib['id'],
         'grupo_economico': child.attrib['grupo-economico'],
         'nome': child[0].text,
         'nome_amigavel': child[1].text,
@@ -54,10 +62,10 @@ for child in root[2]:
     session.commit()
 
     for room in child[9]:
-        sala = { 
+        sala = {
             'sala_id': room.attrib['id'],
             'nome': room.attrib['nome'],
-            'premiere': boolean(room.attrib['premiere']), 
+            'premiere': boolean(room.attrib['premiere']),
             'capacidade': room.attrib['capacidade'],
             'capacidade_dbox': room.attrib['capacidade-dbox'],
             'media': room.attrib['media'],
@@ -73,6 +81,15 @@ for child in root[2]:
         session.add(Salas(**sala))
         session.commit()
 
+for child in root[3][0][-1][1:]:
+    legenda = {
+        'id': child.attrib['id'],
+        'descricao': clean(child[0].text),
+    }
+    session.add(Legendas(**legenda))
+    session.commit()
+
+
 for child in root[3][1]:
     filme = {
         'id': child.attrib['id'],
@@ -84,7 +101,7 @@ for child in root[3][1]:
         'titulo_original': child[1].text,
         'titulo_amigavel': child[2].text,
         'genero_id': child[3].attrib['id'],
-        'duracao' : child[4].text,
+        'duracao': child[4].text,
         'censura_id': child[5].attrib['id'],
         'censura_nome': child[5].text,
         'sinopse': child[6].text,
@@ -95,12 +112,12 @@ for child in root[3][1]:
         'distribuidora_id': child[10].attrib['id'],
         'distribuidora_nome': child[10].text,
         'photo1': child[11].attrib['src'],
-        'photo2': child[12].attrib['src'], 
-        'photocartaz': child[13].attrib['src'], 
+        'photo2': child[12].attrib['src'],
+        'photocartaz': child[13].attrib['src'],
         'data': datetime.strptime(child[16].attrib['id'], '%Y-%m-%d'),
         'ranking_semanal': child[17].attrib['posicao'],
     }
-    session.add(Filmes(**filme)) 
+    session.add(Filmes(**filme))
     session.commit()
 
 for child in root[6]:

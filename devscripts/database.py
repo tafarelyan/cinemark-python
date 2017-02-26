@@ -36,7 +36,6 @@ class Cinemas(Base):
     __tablename__ = 'cinemas'
 
     id = Column(Integer, primary_key=True)
-    cinema_id = Column(Integer)
     grupo_economico = Column(String(30))
     nome = Column(String(40))
     nome_amigavel = Column(String(40))
@@ -46,7 +45,6 @@ class Cinemas(Base):
     longitude = Column(Float)
     precos = Column(Text)
     cidade_id = Column(Integer, ForeignKey('cidades.id'))
-    # cidade_nome
     cnpj = Column(String(18))
 
     def __repr__(self):
@@ -103,6 +101,13 @@ class Filmes(Base):
 
     def __repr__(self):
         return "<Filmes(titulo='%s')>" % self.titulo_original
+
+
+class Legendas(Base):
+    __tablename__ = 'legendas'
+
+    id = Column(String(2), primary_key=True)
+    descricao = Column(Text)
 
 
 class Generos(Base):
