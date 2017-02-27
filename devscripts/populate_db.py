@@ -4,12 +4,12 @@ import xml.etree.ElementTree as ET
 import requests
 from sqlalchemy.orm import Session
 
-from database import (engine, Regioes, Cidades, Cinemas, Generos, Salas,
-                      Filmes, Legendas)
+from cinemark.database import (engine, Regioes, Cidades, Cinemas, Generos,
+                               Salas, Filmes, Legendas, EmCartaz)
 
 
 def clean(text):
-    return ' '.join(text.split())
+    return ' '.join(text.strip().split())
 
 
 def boolean(text):
@@ -18,12 +18,8 @@ def boolean(text):
 
 r = requests.get('http://www.cinemark.com.br/programacao.xml')
 root = ET.fromstring(r.content)
-
-
-for child in root[3][0][2:-1]:
-    emcartaz = {}
-
 session = Session(engine)
+
 for child in root[0]:
     regiao = {
         'id': child.attrib['id'],
@@ -81,6 +77,32 @@ for child in root[2]:
         session.add(Salas(**sala))
         session.commit()
 
+for child in root[3][0][2:-1]:
+    for film in child[1:]:
+        for horario in film[2]:
+            emcartaz = {
+                'inicio': datetime.strptime(root[3][0][0].text, '%d/%m/%Y'),
+                'fim': datetime.strptime(root[3][0][1].text, '%d/%m/%Y'),
+                'cinema_id': child.attrib['id'],
+                'cidade_id': child.attrib['cidade'],
+                'programacao_disponivel': boolean(child[0].text),
+                'filme_id': film.attrib['id'],
+                'ingresso_id': film.attrib['id_ingresso'],
+                'copia': film.attrib['copia'],
+                'versao': film.attrib['versao'],
+                'dbox': boolean(film.attrib['dbox']),
+                'exibicao_id': film[0].attrib['id'],
+                'exibicao_nome': clean(film[0].text),
+                'tipo_sessao': film[1].attrib['id'],
+                'premiere': boolean(film[2].attrib['premiere']),
+                'legenda': horario.attrib['legenda'],
+                'pipe': horario.attrib['pipe'],
+                'sala': horario.attrib['sala'],
+                'horario': horario.text,
+            }
+            session.add(EmCartaz(**emcartaz))
+            session.commit()
+
 for child in root[3][0][-1][1:]:
     legenda = {
         'id': child.attrib['id'],
@@ -93,7 +115,7 @@ for child in root[3][0][-1][1:]:
 for child in root[3][1]:
     filme = {
         'id': child.attrib['id'],
-        'id_ingresso': child.attrib['id_ingresso'],
+        'ingresso_id': child.attrib['id_ingresso'],
         'blockbuster': boolean(child.attrib['blockbuster']),
         'salas': child.attrib['salas'],
         'sessoes': child.attrib['sessoes'],

@@ -75,7 +75,7 @@ class Filmes(Base):
     __tablename__ = 'filmes'
 
     id = Column(Integer, primary_key=True)
-    id_ingresso = Column(Integer)
+    ingresso_id = Column(Integer)
     blockbuster = Column(Boolean)
     salas = Column(Integer)
     sessoes = Column(Integer)
@@ -103,11 +103,38 @@ class Filmes(Base):
         return "<Filmes(titulo='%s')>" % self.titulo_original
 
 
+class EmCartaz(Base):
+    __tablename__ = 'emcartaz'
+
+    id = Column(Integer, primary_key=True)
+    inicio = Column(Date)
+    fim = Column(Date)
+    cinema_id = Column(Integer, ForeignKey('cinemas.id'))
+    cidade_id = Column(Integer, ForeignKey('cidades.id'))
+    programacao_disponivel = Column(Boolean)
+    filme_id = Column(Integer, ForeignKey('filmes.id'))
+    ingresso_id = Column(Integer)
+    copia = Column(Integer)
+    versao = Column(String(10))
+    dbox = Column(Boolean)
+    exibicao_id = Column(Integer)
+    exibicao_nome = Column(String(10))
+    tipo_sessao = Column(String(5))
+    premiere = Column(Boolean)
+    legenda = Column(String(2))
+    pipe = Column(String(10))
+    sala = Column(Integer)
+    horario = Column(String(5))
+
+
 class Legendas(Base):
     __tablename__ = 'legendas'
 
     id = Column(String(2), primary_key=True)
     descricao = Column(Text)
+
+    def __repr__(self):
+        return "<Legendas(id='%s')>" % self.id
 
 
 class Generos(Base):
