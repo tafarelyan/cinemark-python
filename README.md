@@ -19,7 +19,7 @@ from cinemark.api import Cinemark
 cinermark = Cinemark(cinema='Patio Paulista')
 ```
 
-Para ver quais são os filmes dispoíveis no estabelecimento:
+Para ver quais são os filmes disponíveis no estabelecimento:
 ```
 >> for filme in cinemark.programacao:
 ...     print(filme['id'], filme['titulo'])
