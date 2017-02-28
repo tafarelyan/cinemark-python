@@ -6,7 +6,7 @@
 Para instalar, apenas:
 
 ```
-$ pip install cinemark-python
+$ pip3 install cinemark-python
 ```
 
 ## Uso
