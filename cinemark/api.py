@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import date
 import xml.etree.ElementTree as ET
 
 import requests
@@ -10,16 +10,13 @@ class Cinemark(object):
         r = requests.get('http://www.cinemark.com.br/programacao.xml')
         self.root = ET.fromstring(r.content)
 
-        if kwargs.get('cidade'):
-            self.cidade = self._validar_cidade(kwargs.get('cidade'))
-
-        elif kwargs.get('cinema'):
-            self.cinema, self.cidade = self._validar_cinema(kwargs.get('cinema'))
+        if kwargs.get('cinema'):
+            self.cinema = self._validar_cinema(kwargs.get('cinema'))
 
     def _validar_cinema(self, cinema):
         for c in self.root.findall('./complexos//cinema'):
             if c[0].text == cinema:
-                return c.get('id'), c[6].get('id')
+                return c.get('id')
 
     @staticmethod
     def _clean(text):

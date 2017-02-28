@@ -12,7 +12,7 @@ def requirements():
 
 
 setup(name='cinemark-python',
-      version='0.0.2',
+      version='0.0.3',
       description='Wrapper for Cinemark Brasil API',
       author='Tafarel Yan',
       author_email='tafarel.yan@gmail.com',
