@@ -1,5 +1,6 @@
 # Cinemark Python
 **Wrapper para a API pública do Cinemark**
+Mais informações sobre a API acesse http://www.cinemark.com.br/programacao.xml
 
 ## Instalação
 
