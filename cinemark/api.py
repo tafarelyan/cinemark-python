@@ -4,6 +4,10 @@ import xml.etree.ElementTree as ET
 import requests
 
 
+class CinemarkError(Exception):
+    pass
+
+
 class Cinemark(object):
 
     def __init__(self, **kwargs):
@@ -12,15 +16,20 @@ class Cinemark(object):
 
         if kwargs.get('cinema'):
             self.cinema = self._validar_cinema(kwargs.get('cinema'))
-
+        
     def _validar_cinema(self, cinema):
         for c in self.root.findall('./complexos//cinema'):
             if c[0].text == cinema:
                 return c.get('id')
+        else:
+            raise CinemarkError("Cinema não encontrado")
 
     @staticmethod
     def _clean(text):
-        return ' '.join(text.strip().split())
+        try:
+            return ' '.join(text.strip().split())
+        except:
+            return ''
 
     @property
     def programacao(self):
@@ -43,6 +52,10 @@ class Cinemark(object):
     def horarios_filme(self, filme_id, data=date.today().strftime('%d/%m/%Y')):
         cinema = self.root[3][0].find('cinema[@id="%s"]' % self.cinema)
         horarios = cinema.find('filme[@id="%s"]/horarios' % filme_id)
+
+        if not horarios:
+            raise CinemarkError("Não há horários disponíveis")
+
         for horario in horarios:
             if self._disponivel(horario.get('legenda'), data):
                 yield {
