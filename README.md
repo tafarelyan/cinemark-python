@@ -14,7 +14,7 @@ $ pip3 install cinemark-python
 ## Uso
 
 ```
-from cinemark.api import Cinemark
+from cinemark import Cinemark
 
 cinermark = Cinemark(cinema='Patio Paulista')
 ```
