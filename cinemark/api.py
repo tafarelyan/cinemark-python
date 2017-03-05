@@ -92,5 +92,5 @@ class Cinemark(object):
 
     def _cinema_by_id(self, cinema_id):
         for c in self.root.findall('./complexos//cinema'):
-            if cinema_id == c.get('id'):
+            if str(cinema_id) == c.get('id'):
                 return c[0].text
