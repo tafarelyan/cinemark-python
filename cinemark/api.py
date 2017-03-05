@@ -16,6 +16,9 @@ class Cinemark(object):
         elif kwargs.get('cidade'):
             self.cidade = self._validar_cidade(kwargs.get('cidade'))
 
+        elif kwargs.get('filme'):
+            self.filme = self._validar_filme(kwargs.get('filme'))
+
     def _validar_cinema(self, cinema):
         for c in self.root.findall('./complexos//cinema'):
             if c[0].text == cinema:
@@ -25,6 +28,11 @@ class Cinemark(object):
         for c in self.root.findall('./cidades//'):
             if cidade == c.text:
                 return c.get('id')
+
+    def _validar_filme(self, filme):
+        for f in self.root[3][1]:
+            if filme == f[0].text or filme == f[1].text:
+                return f.get('id')
 
     @staticmethod
     def _clean(text):
@@ -94,3 +102,7 @@ class Cinemark(object):
         for c in self.root.findall('./complexos//cinema'):
             if str(cinema_id) == c.get('id'):
                 return c[0].text
+
+    def cinemas_disponiveis(self, cidade):
+        self.cidade = self._validar_cidade(cidade)
+        yield from self._achar_cinema(self.filme)

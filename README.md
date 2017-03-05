@@ -80,3 +80,20 @@ operações normalmente.
 {'id': '727', 'nome': 'Villa Lobos'}
 >> cinemark.cinema = 723
 ```
+
+Outra opção é iniciá-lo com o nome do filme (português ou inglês).
+```
+>> cinemark = Cinemark(filme='The Great Wall')
+>> for cinema in cinemark.cinemas_disponiveis(cidade="São Paulo"):
+...     print(cinema)
+{'id': '716', 'nome': 'Aricanduva'}
+{'id': '690', 'nome': 'Boulevard Tatuape'}
+{'id': '699', 'nome': 'Center Norte'}
+{'id': '705', 'nome': 'Central Plaza'} 
+{'id': '723', 'nome': 'Patio Paulista'}
+{'id': '710', 'nome': 'SP Market'}
+{'id': '687', 'nome': 'Shopping D'}
+{'id': '707', 'nome': 'Shopping Iguatemi SP'}
+{'id': '727', 'nome': 'Villa Lobos'}
+>> cinemark.cinema = 723
+```
